@@ -1,0 +1,110 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Posts</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <section id="blog-section" class="blog-container">
+        <h2>Latest Posts</h2>
+        <div id="posts-container" class="posts-grid"></div>
+        <button id="load-more" class="load-more-btn">More</button>
+    </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            fetch('posts.json')
+                .then(response => response.json())
+                .then(posts => {
+                    const postsContainer = document.getElementById('posts-container');
+                    const loadMoreBtn = document.getElementById('load-more');
+                    let visiblePosts = 0;
+
+                    function loadPosts(count = 5) {
+                        posts.slice(visiblePosts, visiblePosts + count).forEach(post => {
+                            const postElement = document.createElement('div');
+                            postElement.className = 'post-card';
+                            postElement.innerHTML = `
+                                <img src="\${post.image}" alt="\${post.title}">
+                                <h3>\${post.title}</h3>
+                                <p>\${post.excerpt}</p>
+                                <a href="\${post.link}" class="read-more">Read More</a>
+                            `;
+                            postsContainer.appendChild(postElement);
+                        });
+                        visiblePosts += count;
+                        if (visiblePosts >= posts.length) loadMoreBtn.style.display = 'none';
+                    }
+
+                    loadMoreBtn.addEventListener('click', () => loadPosts(5));
+                    loadPosts();
+                });
+        });
+    </script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        .blog-container {
+            max-width: 1200px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .posts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .post-card {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.3s ease-in-out;
+        }
+        .post-card img {
+            width: 100%;
+            height: auto;
+        }
+        .post-card h3 {
+            padding: 15px;
+            margin: 0;
+        }
+        .post-card p {
+            padding: 0 15px;
+            font-size: 14px;
+            color: #555;
+        }
+        .read-more {
+            display: block;
+            padding: 15px;
+            background: #0073e6;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .load-more-btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin-top: 20px;
+            background-color: #0073e6;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 4px;
+        }
+    </style>
+</body>
+</html>
